@@ -1,7 +1,7 @@
 package com.conexa.backend.scheduling.presentation.api.v1.mappers;
 
 import com.conexa.backend.scheduling.domain.models.Doctor;
-import com.conexa.backend.scheduling.presentation.api.v1.dtos.SignupRequestDTO;
+import com.conexa.backend.scheduling.presentation.api.v1.dtos.requests.SignupRequestDTO;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;

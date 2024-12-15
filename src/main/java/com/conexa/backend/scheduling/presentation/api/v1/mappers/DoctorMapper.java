@@ -1,7 +1,7 @@
 package com.conexa.backend.scheduling.presentation.api.v1.mappers;
 
 import com.conexa.backend.scheduling.domain.models.Doctor;
-import com.conexa.backend.scheduling.presentation.api.v1.dtos.DoctorResponseDTO;
+import com.conexa.backend.scheduling.presentation.api.v1.dtos.responses.DoctorResponseDTO;
 import org.springframework.stereotype.Component;
 
 @Component

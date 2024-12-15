@@ -4,7 +4,7 @@ import br.com.caelum.stella.validation.CPFValidator;
 import com.conexa.backend.scheduling.domain.exceptions.auth.InvalidCPFException;
 import com.conexa.backend.scheduling.domain.exceptions.auth.MustBeAtLeast18YearsOldException;
 import com.conexa.backend.scheduling.domain.exceptions.auth.PasswordsDoNotMatchException;
-import com.conexa.backend.scheduling.presentation.api.v1.dtos.SignupRequestDTO;
+import com.conexa.backend.scheduling.presentation.api.v1.dtos.requests.SignupRequestDTO;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;

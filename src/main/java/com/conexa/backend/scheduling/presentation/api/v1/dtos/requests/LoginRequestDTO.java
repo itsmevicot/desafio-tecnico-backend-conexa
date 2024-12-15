@@ -1,4 +1,4 @@
-package com.conexa.backend.scheduling.presentation.api.v1.dtos;
+package com.conexa.backend.scheduling.presentation.api.v1.dtos.requests;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;

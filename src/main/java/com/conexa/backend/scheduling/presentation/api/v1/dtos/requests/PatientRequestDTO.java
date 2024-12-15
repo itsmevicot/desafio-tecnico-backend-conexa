@@ -1,4 +1,4 @@
-package com.conexa.backend.scheduling.presentation.api.v1.dtos;
+package com.conexa.backend.scheduling.presentation.api.v1.dtos.requests;
 
 import br.com.caelum.stella.bean.validation.CPF;
 import jakarta.validation.constraints.NotBlank;

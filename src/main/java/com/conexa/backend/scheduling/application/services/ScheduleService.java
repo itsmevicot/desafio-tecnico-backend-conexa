@@ -1,7 +1,6 @@
 package com.conexa.backend.scheduling.application.services;
 
 import com.conexa.backend.scheduling.domain.exceptions.doctor.DoctorNotFoundException;
-import com.conexa.backend.scheduling.domain.exceptions.patient.PatientNotFoundException;
 import com.conexa.backend.scheduling.domain.exceptions.schedule.ConflictingScheduleException;
 import com.conexa.backend.scheduling.domain.exceptions.schedule.InvalidScheduleDateException;
 import com.conexa.backend.scheduling.domain.models.Doctor;
@@ -10,6 +9,10 @@ import com.conexa.backend.scheduling.domain.models.Schedule;
 import com.conexa.backend.scheduling.infrastructure.repositories.DoctorRepository;
 import com.conexa.backend.scheduling.infrastructure.repositories.PatientRepository;
 import com.conexa.backend.scheduling.infrastructure.repositories.ScheduleRepository;
+import com.conexa.backend.scheduling.presentation.api.v1.dtos.PatientDTO;
+import com.conexa.backend.scheduling.presentation.api.v1.dtos.requests.CreateScheduleRequestDTO;
+import com.conexa.backend.scheduling.presentation.api.v1.dtos.responses.ScheduleResponseDTO;
+import com.conexa.backend.scheduling.presentation.api.v1.mappers.ScheduleMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -18,19 +21,23 @@ import java.time.LocalDateTime;
 @Service
 @RequiredArgsConstructor
 public class ScheduleService {
+
     private final ScheduleRepository scheduleRepository;
     private final DoctorRepository doctorRepository;
     private final PatientRepository patientRepository;
+    private final ScheduleMapper scheduleMapper;
 
-    public Schedule createSchedule(Schedule schedule) {
-        Doctor doctor = getDoctor(schedule.getDoctor().getId());
-        Patient patient = getPatient(schedule.getPatient().getId());
+    public ScheduleResponseDTO createSchedule(CreateScheduleRequestDTO dto, Long doctorId) {
+        Doctor doctor = getDoctor(doctorId);
+        Patient patient = getOrCreatePatient(dto.patient());
 
-        validateScheduleDate(schedule.getDateTime());
+        validateScheduleDate(dto.dateTime());
+        checkConflicts(doctor.getId(), patient.getId(), dto.dateTime());
 
-        checkConflicts(doctor.getId(), patient.getId(), schedule.getDateTime());
+        Schedule schedule = scheduleMapper.toSchedule(dto, patient, doctor);
+        schedule = scheduleRepository.save(schedule);
 
-        return scheduleRepository.save(schedule);
+        return scheduleMapper.toResponseDTO(schedule);
     }
 
     private Doctor getDoctor(Long doctorId) {
@@ -38,9 +45,24 @@ public class ScheduleService {
                 .orElseThrow(() -> new DoctorNotFoundException("The doctor information could not be found."));
     }
 
-    private Patient getPatient(Long patientId) {
-        return patientRepository.findById(patientId)
-                .orElseThrow(PatientNotFoundException::new);
+    private Patient getOrCreatePatient(PatientDTO patientDTO) {
+        return patientRepository.findByCpf(patientDTO.cpf())
+                .map(existingPatient -> updatePatientNameIfNecessary(existingPatient, patientDTO.name()))
+                .orElseGet(() -> patientRepository.save(
+                        Patient.builder()
+                                .name(patientDTO.name())
+                                .cpf(patientDTO.cpf())
+                                .build()
+                ));
+    }
+
+
+    private Patient updatePatientNameIfNecessary(Patient existingPatient, String newName) {
+        if (!existingPatient.getName().equals(newName)) {
+            existingPatient.setName(newName);
+            return patientRepository.save(existingPatient);
+        }
+        return existingPatient;
     }
 
     private void validateScheduleDate(LocalDateTime dateTime) {
@@ -50,12 +72,12 @@ public class ScheduleService {
     }
 
     private void checkConflicts(Long doctorId, Long patientId, LocalDateTime dateTime) {
+
         boolean hasDoctorConflict = scheduleRepository.existsByDoctorIdAndDateTimeBetween(
                 doctorId,
                 dateTime.minusMinutes(20),
                 dateTime.plusMinutes(20)
         );
-
         if (hasDoctorConflict) {
             throw new ConflictingScheduleException("The doctor has a conflicting schedule in a 20-minute interval.");
         }
@@ -65,7 +87,6 @@ public class ScheduleService {
                 dateTime.minusMinutes(20),
                 dateTime.plusMinutes(20)
         );
-
         if (hasPatientConflict) {
             throw new ConflictingScheduleException("The patient has a conflicting schedule in a 20-minute interval.");
         }

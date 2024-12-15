@@ -1,12 +1,13 @@
 package com.conexa.backend.scheduling.application.services;
 
+import com.conexa.backend.scheduling.domain.exceptions.auth.InvalidCredentialsException;
 import com.conexa.backend.scheduling.domain.exceptions.doctor.DoctorAlreadyExistsException;
 import com.conexa.backend.scheduling.domain.exceptions.doctor.DoctorNotFoundException;
 import com.conexa.backend.scheduling.domain.models.Doctor;
 import com.conexa.backend.scheduling.infrastructure.repositories.DoctorRepository;
 import com.conexa.backend.scheduling.infrastructure.security.jwt.JwtUtil;
 import com.conexa.backend.scheduling.infrastructure.security.services.TokenBlacklistService;
-import com.conexa.backend.scheduling.presentation.api.v1.dtos.SignupRequestDTO;
+import com.conexa.backend.scheduling.presentation.api.v1.dtos.requests.SignupRequestDTO;
 import com.conexa.backend.scheduling.presentation.api.v1.mappers.AuthMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -59,12 +60,12 @@ public class AuthService {
         Doctor doctor = doctorRepository.findByEmail(email)
                 .orElseThrow(() -> {
                     log.warn("Login failed: No doctor found with email: {}", email);
-                    return new DoctorNotFoundException("Invalid email or password.");
+                    return new InvalidCredentialsException();
                 });
 
         if (!passwordEncoder.matches(password, doctor.getPassword())) {
             log.warn("Login failed: Password mismatch for email: {}", email);
-            throw new IllegalArgumentException("Invalid email or password.");
+            throw new InvalidCredentialsException();
         }
 
         String token = jwtUtil.generateToken(email);

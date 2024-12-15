@@ -2,7 +2,7 @@ package com.conexa.backend.scheduling.presentation.api.v1.controllers;
 
 import com.conexa.backend.scheduling.application.services.DoctorService;
 import com.conexa.backend.scheduling.presentation.api.v1.BaseV1Controller;
-import com.conexa.backend.scheduling.presentation.api.v1.dtos.DoctorResponseDTO;
+import com.conexa.backend.scheduling.presentation.api.v1.dtos.responses.DoctorResponseDTO;
 import com.conexa.backend.scheduling.presentation.api.v1.mappers.DoctorMapper;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;

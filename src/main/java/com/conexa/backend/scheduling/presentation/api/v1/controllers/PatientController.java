@@ -2,8 +2,8 @@ package com.conexa.backend.scheduling.presentation.api.v1.controllers;
 
 import com.conexa.backend.scheduling.application.services.PatientService;
 import com.conexa.backend.scheduling.presentation.api.v1.BaseV1Controller;
-import com.conexa.backend.scheduling.presentation.api.v1.dtos.PatientRequestDTO;
-import com.conexa.backend.scheduling.presentation.api.v1.dtos.PatientResponseDTO;
+import com.conexa.backend.scheduling.presentation.api.v1.dtos.requests.PatientRequestDTO;
+import com.conexa.backend.scheduling.presentation.api.v1.dtos.responses.PatientResponseDTO;
 import com.conexa.backend.scheduling.presentation.api.v1.mappers.PatientMapper;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
