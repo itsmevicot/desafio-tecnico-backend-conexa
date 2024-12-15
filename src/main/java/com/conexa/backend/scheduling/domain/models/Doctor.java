@@ -44,9 +44,9 @@ public class Doctor {
     @Past(message = "Birth date must be in the past")
     private LocalDate birthDate;
 
-    @Column(nullable = false)
+    @Column(name = "telephone", nullable = false)
     @NotBlank(message = "Phone number is mandatory")
-    private String phone;
+    private String telephone;
 
     @Column(nullable = false)
     private boolean isActive = true;

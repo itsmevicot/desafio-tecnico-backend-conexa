@@ -1,8 +1,9 @@
 package com.conexa.backend.scheduling.presentation.api.v1.controllers;
 
-import com.conexa.backend.scheduling.domain.models.Doctor;
 import com.conexa.backend.scheduling.application.services.DoctorService;
 import com.conexa.backend.scheduling.presentation.api.v1.BaseV1Controller;
+import com.conexa.backend.scheduling.presentation.api.v1.dtos.DoctorResponseDTO;
+import com.conexa.backend.scheduling.presentation.api.v1.mappers.DoctorMapper;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 public class DoctorController extends BaseV1Controller {
 
     private final DoctorService doctorService;
+    private final DoctorMapper doctorMapper;
 
     /**
      * Retrieves a doctor by ID.
@@ -22,8 +24,8 @@ public class DoctorController extends BaseV1Controller {
      * @return the doctor with the given ID
      */
     @GetMapping("/{id}")
-    public Doctor getDoctorById(@PathVariable Long id) {
-        return doctorService.getDoctorById(id);
+    public DoctorResponseDTO getDoctorById(@PathVariable Long id) {
+        return doctorMapper.toResponseDTO(doctorService.getDoctorById(id));
     }
 
     /**
@@ -32,8 +34,8 @@ public class DoctorController extends BaseV1Controller {
      * @param email the email of the doctor
      * @return the doctor with the given email
      */
-    @GetMapping("/email")
-    public Doctor findByEmail(@RequestParam String email) {
-        return doctorService.findByEmail(email);
+    @GetMapping("/{email}")
+    public DoctorResponseDTO findByEmail(@RequestParam String email) {
+        return doctorMapper.toResponseDTO(doctorService.findByEmail(email));
     }
 }

@@ -1,9 +1,12 @@
 package com.conexa.backend.scheduling.presentation.api.v1.controllers;
 
 import com.conexa.backend.scheduling.application.services.PatientService;
-import com.conexa.backend.scheduling.domain.models.Patient;
 import com.conexa.backend.scheduling.presentation.api.v1.BaseV1Controller;
+import com.conexa.backend.scheduling.presentation.api.v1.dtos.PatientRequestDTO;
+import com.conexa.backend.scheduling.presentation.api.v1.dtos.PatientResponseDTO;
+import com.conexa.backend.scheduling.presentation.api.v1.mappers.PatientMapper;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,17 +18,18 @@ import org.springframework.web.bind.annotation.*;
 public class PatientController extends BaseV1Controller {
 
     private final PatientService patientService;
+    private final PatientMapper patientMapper;
 
     /**
      * Creates a new patient.
      *
-     * @param patient the patient information
+     * @param request the patient information
      * @return the created patient
      */
     @PostMapping
-    public ResponseEntity<Patient> createPatient(@RequestBody Patient patient) {
-        Patient createdPatient = patientService.createPatient(patient);
-        return ResponseEntity.ok(createdPatient);
+    public ResponseEntity<PatientResponseDTO> createPatient(@Valid @RequestBody PatientRequestDTO request) {
+        var patient = patientService.createPatient(patientMapper.toEntity(request));
+        return ResponseEntity.ok(patientMapper.toResponseDTO(patient));
     }
 
     /**
@@ -35,22 +39,22 @@ public class PatientController extends BaseV1Controller {
      * @return the patient with the given ID
      */
     @GetMapping("/{id}")
-    public ResponseEntity<Patient> getPatientById(@PathVariable Long id) {
-        Patient patient = patientService.getPatientById(id);
-        return ResponseEntity.ok(patient);
+    public ResponseEntity<PatientResponseDTO> getPatientById(@PathVariable Long id) {
+        var patient = patientService.getPatientById(id);
+        return ResponseEntity.ok(patientMapper.toResponseDTO(patient));
     }
 
     /**
      * Updates an existing patient.
      *
      * @param id the ID of the patient to update
-     * @param updatedPatient the updated patient information
+     * @param request the updated patient information
      * @return the updated patient
      */
     @PutMapping("/{id}")
-    public ResponseEntity<Patient> updatePatient(@PathVariable Long id, @RequestBody Patient updatedPatient) {
-        Patient patient = patientService.updatePatient(id, updatedPatient);
-        return ResponseEntity.ok(patient);
+    public ResponseEntity<PatientResponseDTO> updatePatient(@PathVariable Long id, @Valid @RequestBody PatientRequestDTO request) {
+        var updatedPatient = patientService.updatePatient(id, patientMapper.toEntity(request));
+        return ResponseEntity.ok(patientMapper.toResponseDTO(updatedPatient));
     }
 
     /**
@@ -60,8 +64,8 @@ public class PatientController extends BaseV1Controller {
      * @return a success message
      */
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deletePatient(@PathVariable Long id) {
+    public ResponseEntity<Void> deletePatient(@PathVariable Long id) {
         patientService.deletePatient(id);
-        return ResponseEntity.ok("Patient successfully deleted (soft delete)."); // TODO: Remove comment and return http status 204
+        return ResponseEntity.noContent().build();
     }
 }

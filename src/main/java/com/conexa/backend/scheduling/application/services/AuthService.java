@@ -5,6 +5,8 @@ import com.conexa.backend.scheduling.domain.exceptions.doctor.DoctorNotFoundExce
 import com.conexa.backend.scheduling.domain.models.Doctor;
 import com.conexa.backend.scheduling.domain.repositories.DoctorRepository;
 import com.conexa.backend.scheduling.infrastructure.security.JwtTokenProvider;
+import com.conexa.backend.scheduling.presentation.api.v1.dtos.SignupRequestDTO;
+import com.conexa.backend.scheduling.presentation.api.v1.mappers.AuthMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -23,15 +25,16 @@ public class AuthService {
      * @param doctor the doctor to be registered
      * @return the registered doctor
      */
-    public Doctor signup(Doctor doctor) {
-        if (doctorRepository.existsByCpf(doctor.getCpf())) {
+    public Doctor signup(SignupRequestDTO signupRequest) {
+        if (doctorRepository.existsByCpf(signupRequest.cpf())) {
             throw new DoctorAlreadyExistsException("A doctor with this CPF already exists.");
         }
 
-        if (doctorRepository.existsByEmail(doctor.getEmail())) {
+        if (doctorRepository.existsByEmail(signupRequest.email())) {
             throw new DoctorAlreadyExistsException("A doctor with this email already exists.");
         }
 
+        Doctor doctor = AuthMapper.toDoctor(signupRequest);
         doctor.setPassword(passwordEncoder.encode(doctor.getPassword()));
 
         return doctorRepository.save(doctor);
