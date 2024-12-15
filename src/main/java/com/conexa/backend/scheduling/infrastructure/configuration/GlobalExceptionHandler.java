@@ -3,9 +3,14 @@ package com.conexa.backend.scheduling.infrastructure.configuration;
 import com.conexa.backend.scheduling.domain.exceptions.ExceptionMessageBuilder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.NoHandlerFoundException;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -24,6 +29,20 @@ public class GlobalExceptionHandler {
                 .body(new ExceptionResponse("Not Found", "The requested endpoint does not exist."));
     }
 
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<ExceptionResponse> handleValidationExceptions(MethodArgumentNotValidException ex) {
+        Map<String, String> errors = new HashMap<>();
+        ex.getBindingResult().getAllErrors().forEach(error -> {
+            String fieldName = ((FieldError) error).getField();
+            String errorMessage = error.getDefaultMessage();
+            errors.put(fieldName, errorMessage);
+        });
+
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(new ExceptionResponse("Validation Error", errors));
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ExceptionResponse> handleGenericException(Exception ex) {
         return ResponseEntity
@@ -31,5 +50,5 @@ public class GlobalExceptionHandler {
                 .body(new ExceptionResponse("Internal Server Error", ex.getMessage()));
     }
 
-    public record ExceptionResponse(String title, String message) {}
+    public record ExceptionResponse(String title, Object message) {}
 }

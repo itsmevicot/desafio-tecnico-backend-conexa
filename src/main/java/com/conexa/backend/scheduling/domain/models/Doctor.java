@@ -49,5 +49,6 @@ public class Doctor {
     private String telephone;
 
     @Column(nullable = false)
+    @Builder.Default
     private boolean isActive = true;
 }

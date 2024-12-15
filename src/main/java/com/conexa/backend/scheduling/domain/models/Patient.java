@@ -29,6 +29,7 @@ public class Patient {
     private String cpf;
 
     @Column(nullable = false)
+    @Builder.Default
     private boolean isActive = true;
 }
 

@@ -8,6 +8,7 @@ import com.conexa.backend.scheduling.presentation.api.v1.dtos.LoginRequestDTO;
 import com.conexa.backend.scheduling.presentation.api.v1.dtos.LoginResponseDTO;
 import com.conexa.backend.scheduling.presentation.api.v1.dtos.SignupRequestDTO;
 import com.conexa.backend.scheduling.presentation.api.v1.mappers.DoctorMapper;
+import com.conexa.backend.scheduling.presentation.api.v1.validators.SignupRequestValidator;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +25,7 @@ public class AuthController extends BaseV1Controller {
 
     @PostMapping("/signup")
     public ResponseEntity<DoctorResponseDTO> signup(@Valid @RequestBody SignupRequestDTO signupRequest) {
+        SignupRequestValidator.validate(signupRequest);
         Doctor doctor = authService.signup(signupRequest);
         DoctorResponseDTO response = doctorMapper.toResponseDTO(doctor);
         return ResponseEntity.ok(response);
