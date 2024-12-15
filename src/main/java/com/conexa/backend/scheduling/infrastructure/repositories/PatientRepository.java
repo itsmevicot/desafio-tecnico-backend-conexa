@@ -1,4 +1,4 @@
-package com.conexa.backend.scheduling.domain.repositories;
+package com.conexa.backend.scheduling.infrastructure.repositories;
 
 import com.conexa.backend.scheduling.domain.models.Patient;
 import org.springframework.data.jpa.repository.JpaRepository;

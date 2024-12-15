@@ -1,4 +1,4 @@
-package com.conexa.backend.scheduling.domain.repositories;
+package com.conexa.backend.scheduling.infrastructure.repositories;
 
 
 

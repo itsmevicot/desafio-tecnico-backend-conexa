@@ -3,7 +3,7 @@ package com.conexa.backend.scheduling.application.services;
 import com.conexa.backend.scheduling.domain.exceptions.doctor.DoctorAlreadyExistsException;
 import com.conexa.backend.scheduling.domain.exceptions.doctor.DoctorNotFoundException;
 import com.conexa.backend.scheduling.domain.models.Doctor;
-import com.conexa.backend.scheduling.domain.repositories.DoctorRepository;
+import com.conexa.backend.scheduling.infrastructure.repositories.DoctorRepository;
 import com.conexa.backend.scheduling.infrastructure.security.jwt.JwtUtil;
 import com.conexa.backend.scheduling.presentation.api.v1.dtos.SignupRequestDTO;
 import com.conexa.backend.scheduling.presentation.api.v1.mappers.AuthMapper;

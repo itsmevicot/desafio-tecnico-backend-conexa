@@ -2,7 +2,7 @@ package com.conexa.backend.scheduling.application.services;
 
 import com.conexa.backend.scheduling.domain.exceptions.doctor.DoctorNotFoundException;
 import com.conexa.backend.scheduling.domain.models.Doctor;
-import com.conexa.backend.scheduling.domain.repositories.DoctorRepository;
+import com.conexa.backend.scheduling.infrastructure.repositories.DoctorRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

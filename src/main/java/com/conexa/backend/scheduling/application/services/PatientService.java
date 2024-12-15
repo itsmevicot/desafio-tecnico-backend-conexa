@@ -1,7 +1,7 @@
 package com.conexa.backend.scheduling.application.services;
 
 import com.conexa.backend.scheduling.domain.models.Patient;
-import com.conexa.backend.scheduling.domain.repositories.PatientRepository;
+import com.conexa.backend.scheduling.infrastructure.repositories.PatientRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

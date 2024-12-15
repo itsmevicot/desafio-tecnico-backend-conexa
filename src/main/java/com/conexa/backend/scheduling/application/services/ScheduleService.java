@@ -7,9 +7,9 @@ import com.conexa.backend.scheduling.domain.exceptions.schedule.InvalidScheduleD
 import com.conexa.backend.scheduling.domain.models.Doctor;
 import com.conexa.backend.scheduling.domain.models.Patient;
 import com.conexa.backend.scheduling.domain.models.Schedule;
-import com.conexa.backend.scheduling.domain.repositories.DoctorRepository;
-import com.conexa.backend.scheduling.domain.repositories.PatientRepository;
-import com.conexa.backend.scheduling.domain.repositories.ScheduleRepository;
+import com.conexa.backend.scheduling.infrastructure.repositories.DoctorRepository;
+import com.conexa.backend.scheduling.infrastructure.repositories.PatientRepository;
+import com.conexa.backend.scheduling.infrastructure.repositories.ScheduleRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

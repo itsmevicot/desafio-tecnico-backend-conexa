@@ -2,7 +2,7 @@ package com.conexa.backend.scheduling.infrastructure.security.services;
 
 import com.conexa.backend.scheduling.domain.exceptions.doctor.DoctorNotFoundException;
 import com.conexa.backend.scheduling.domain.models.Doctor;
-import com.conexa.backend.scheduling.domain.repositories.DoctorRepository;
+import com.conexa.backend.scheduling.infrastructure.repositories.DoctorRepository;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
