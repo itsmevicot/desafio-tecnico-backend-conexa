@@ -34,8 +34,7 @@ public class AuthController extends BaseV1Controller {
     @PostMapping("/login")
     public ResponseEntity<LoginResponseDTO> login(@Valid @RequestBody LoginRequestDTO loginRequest) {
         String jwtAccessToken = authService.login(loginRequest.email(), loginRequest.password());
-        String jwtRefreshToken = "dummy_refresh_token";
-        return ResponseEntity.ok(new LoginResponseDTO(jwtAccessToken, jwtRefreshToken));
+        return ResponseEntity.ok(new LoginResponseDTO(jwtAccessToken));
     }
 
     @PostMapping("/logout")
