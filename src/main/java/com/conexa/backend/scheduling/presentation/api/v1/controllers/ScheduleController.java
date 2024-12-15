@@ -1,6 +1,8 @@
 package com.conexa.backend.scheduling.presentation.api.v1.controllers;
 
+import com.conexa.backend.scheduling.application.services.DoctorService;
 import com.conexa.backend.scheduling.application.services.ScheduleService;
+import com.conexa.backend.scheduling.domain.models.Doctor;
 import com.conexa.backend.scheduling.presentation.api.v1.BaseV1Controller;
 import com.conexa.backend.scheduling.presentation.api.v1.dtos.requests.CreateScheduleRequestDTO;
 import com.conexa.backend.scheduling.presentation.api.v1.dtos.responses.ScheduleResponseDTO;
@@ -10,28 +12,26 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 
 @Tag(name = "Schedule")
 @RestController
-@RequestMapping("/schedule")
 @RequiredArgsConstructor
 public class ScheduleController extends BaseV1Controller {
 
     private final ScheduleService scheduleService;
+    private final DoctorService doctorService;
 
-    /**
-     * Creates a new schedule.
-     *
-     * @param request the schedule information
-     * @return the created schedule response
-     */
-    @PostMapping
+    @PostMapping("/schedule")
     public ResponseEntity<ScheduleResponseDTO> createSchedule(@Valid @RequestBody CreateScheduleRequestDTO request) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        Long doctorId = (Long) authentication.getPrincipal(); // Assuming principal returns the doctor ID.
+        String email = authentication.getName();
 
-        ScheduleResponseDTO createdSchedule = scheduleService.createSchedule(request, doctorId);
+        Doctor doctor = doctorService.findByEmail(email);
+
+        ScheduleResponseDTO createdSchedule = scheduleService.createSchedule(request, doctor.getId());
         return ResponseEntity.ok(createdSchedule);
     }
 }

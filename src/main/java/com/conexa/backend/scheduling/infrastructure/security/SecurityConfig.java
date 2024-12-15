@@ -58,8 +58,8 @@ public class SecurityConfig {
                                     "/v3/api-docs/**"
                             ).permitAll()
                             .requestMatchers(
-                                    "/api/v1/schedules/**",
-                                    "/api/v1/patients/**"
+                                    "/api/v1/schedule/**",
+                                    "/api/v1/patient/**"
                             ).authenticated()
                             .anyRequest().permitAll();
                 })

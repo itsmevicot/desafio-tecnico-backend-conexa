@@ -56,7 +56,6 @@ public class ScheduleService {
                 ));
     }
 
-
     private Patient updatePatientNameIfNecessary(Patient existingPatient, String newName) {
         if (!existingPatient.getName().equals(newName)) {
             existingPatient.setName(newName);
@@ -72,20 +71,15 @@ public class ScheduleService {
     }
 
     private void checkConflicts(Long doctorId, Long patientId, LocalDateTime dateTime) {
-
         boolean hasDoctorConflict = scheduleRepository.existsByDoctorIdAndDateTimeBetween(
-                doctorId,
-                dateTime.minusMinutes(20),
-                dateTime.plusMinutes(20)
+                doctorId, dateTime.minusMinutes(20), dateTime.plusMinutes(20)
         );
         if (hasDoctorConflict) {
             throw new ConflictingScheduleException("The doctor has a conflicting schedule in a 20-minute interval.");
         }
 
         boolean hasPatientConflict = scheduleRepository.existsByPatientIdAndDateTimeBetween(
-                patientId,
-                dateTime.minusMinutes(20),
-                dateTime.plusMinutes(20)
+                patientId, dateTime.minusMinutes(20), dateTime.plusMinutes(20)
         );
         if (hasPatientConflict) {
             throw new ConflictingScheduleException("The patient has a conflicting schedule in a 20-minute interval.");
