@@ -6,6 +6,7 @@ import com.conexa.backend.scheduling.domain.models.Doctor;
 import com.conexa.backend.scheduling.presentation.api.v1.BaseV1Controller;
 import com.conexa.backend.scheduling.presentation.api.v1.dtos.requests.CreateScheduleRequestDTO;
 import com.conexa.backend.scheduling.presentation.api.v1.dtos.responses.ScheduleResponseDTO;
+import com.conexa.backend.scheduling.presentation.api.v1.validators.CreateScheduleRequestValidator;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +27,7 @@ public class ScheduleController extends BaseV1Controller {
 
     @PostMapping("/schedule")
     public ResponseEntity<ScheduleResponseDTO> createSchedule(@Valid @RequestBody CreateScheduleRequestDTO request) {
+        CreateScheduleRequestValidator.validate(request);
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String email = authentication.getName();
 

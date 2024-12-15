@@ -1,6 +1,7 @@
 package com.conexa.backend.scheduling.infrastructure.security.jwt;
 
 import com.conexa.backend.scheduling.infrastructure.security.services.DoctorDetailsService;
+import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -47,25 +48,30 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
 
         String jwtToken = authHeader.substring(7);
-        String email = jwtUtil.extractEmail(jwtToken);
-        log.info("Extracted email from JWT: {}", email);
 
-        if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            var userDetails = doctorDetailsService.loadUserByUsername(email);
-            if (jwtUtil.validateToken(jwtToken)) {
-                log.info("JWT validated successfully for user: {}", email);
-                var authToken = new UsernamePasswordAuthenticationToken(
-                        userDetails, null, userDetails.getAuthorities()
-                );
-                authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                SecurityContextHolder.getContext().setAuthentication(authToken);
-            } else {
-                log.warn("Invalid JWT token for request: {}", requestURI);
+        try {
+            String email = jwtUtil.extractEmail(jwtToken);
+            log.info("Extracted email from JWT: {}", email);
+
+            if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+                var userDetails = doctorDetailsService.loadUserByUsername(email);
+
+                if (jwtUtil.validateToken(jwtToken)) {
+                    log.info("JWT validated successfully for user: {}", email);
+
+                    var authToken = new UsernamePasswordAuthenticationToken(
+                            userDetails, null, userDetails.getAuthorities()
+                    );
+                    authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                    SecurityContextHolder.getContext().setAuthentication(authToken);
+                } else {
+                    log.warn("Invalid JWT token for request: {}", requestURI);
+                }
             }
-        } else {
-            log.warn("Failed to authenticate user with JWT for request: {}", requestURI);
+        } catch (ExpiredJwtException ex) {
+            log.warn("JWT expired for request: {}. Exception: {}", requestURI, ex.getMessage());
+            throw ex;
         }
-
         chain.doFilter(request, response);
     }
 }

@@ -3,6 +3,7 @@ package com.conexa.backend.scheduling.presentation.api.v1.dtos.requests;
 import com.conexa.backend.scheduling.presentation.api.v1.deserializers.CustomLocalDateTimeDeserializer;
 import com.conexa.backend.scheduling.presentation.api.v1.dtos.PatientDTO;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.NotNull;
 
@@ -16,5 +17,6 @@ public record CreateScheduleRequestDTO(
         LocalDateTime dateTime,
 
         @NotNull(message = "Patient information is mandatory")
+        @Valid
         PatientDTO patient
 ) {}
