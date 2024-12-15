@@ -38,8 +38,8 @@ public class AuthController extends BaseV1Controller {
     }
 
     @PostMapping("/logout")
-    public ResponseEntity<String> logout(@RequestHeader("Authorization") String token) {
+    public ResponseEntity<Void> logout(@RequestHeader("Authorization") String token) {
         authService.logout(token);
-        return ResponseEntity.ok("Logout successful.");
+        return ResponseEntity.ok().build();
     }
 }

@@ -60,7 +60,7 @@ public class JwtUtil {
                 .getPayload();
     }
 
-    public void invalidateToken(String token) {
-        // TODO: Implement token invalidation
+    public Date extractExpiration(String token) {
+        return getClaims(token).getExpiration();
     }
 }
