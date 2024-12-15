@@ -4,7 +4,7 @@ import com.conexa.backend.scheduling.domain.exceptions.doctor.DoctorAlreadyExist
 import com.conexa.backend.scheduling.domain.exceptions.doctor.DoctorNotFoundException;
 import com.conexa.backend.scheduling.domain.models.Doctor;
 import com.conexa.backend.scheduling.domain.repositories.DoctorRepository;
-import com.conexa.backend.scheduling.infrastructure.security.JwtTokenProvider;
+import com.conexa.backend.scheduling.infrastructure.security.jwt.JwtUtil;
 import com.conexa.backend.scheduling.presentation.api.v1.dtos.SignupRequestDTO;
 import com.conexa.backend.scheduling.presentation.api.v1.mappers.AuthMapper;
 import lombok.RequiredArgsConstructor;
@@ -17,14 +17,8 @@ public class AuthService {
 
     private final DoctorRepository doctorRepository;
     private final PasswordEncoder passwordEncoder;
-    private final JwtTokenProvider jwtTokenProvider;
+    private final JwtUtil jwtUtil;
 
-    /**
-     * Registers a new doctor.
-     *
-     * @param doctor the doctor to be registered
-     * @return the registered doctor
-     */
     public Doctor signup(SignupRequestDTO signupRequest) {
         if (doctorRepository.existsByCpf(signupRequest.cpf())) {
             throw new DoctorAlreadyExistsException("A doctor with this CPF already exists.");
@@ -40,13 +34,6 @@ public class AuthService {
         return doctorRepository.save(doctor);
     }
 
-    /**
-     * Authenticates a doctor and generates a JWT token.
-     *
-     * @param email    the email of the doctor
-     * @param password the password of the doctor
-     * @return the JWT token
-     */
     public String login(String email, String password) {
         Doctor doctor = doctorRepository.findByEmail(email)
                 .orElseThrow(() -> new DoctorNotFoundException("Invalid email or password."));
@@ -55,15 +42,10 @@ public class AuthService {
             throw new IllegalArgumentException("Invalid email or password.");
         }
 
-        return jwtTokenProvider.generateToken(doctor);
+        return jwtUtil.generateToken(email);
     }
 
-    /**
-     * Logs out a doctor by invalidating the JWT token.
-     *
-     * @param token the JWT token to invalidate
-     */
     public void logout(String token) {
-        jwtTokenProvider.invalidateToken(token);
+        jwtUtil.invalidateToken(token);
     }
 }
