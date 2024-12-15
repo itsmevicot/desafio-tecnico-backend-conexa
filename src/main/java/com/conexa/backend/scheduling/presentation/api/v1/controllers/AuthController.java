@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.*;
 
 @Tag(name = "Authentication")
 @RestController
-@RequestMapping
 @RequiredArgsConstructor
 public class AuthController extends BaseV1Controller {
 

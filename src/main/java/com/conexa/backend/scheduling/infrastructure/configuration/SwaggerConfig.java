@@ -17,7 +17,7 @@ public class SwaggerConfig {
                         .version("1.0.0")
                         .description("API Documentation for Conexa Scheduling"))
                 .addServersItem(new Server()
-                        .url("http://localhost:8000/api/v1")
+                        .url("http://localhost:8080/api/v1")
                         .description("Base URL for API v1"));
     }
 }

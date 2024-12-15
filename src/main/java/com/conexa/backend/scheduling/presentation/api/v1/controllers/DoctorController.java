@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.*;
 
 @Tag(name = "Doctor")
 @RestController
-@RequestMapping("/doctors")
 @RequiredArgsConstructor
 public class DoctorController extends BaseV1Controller {
 
@@ -23,7 +22,7 @@ public class DoctorController extends BaseV1Controller {
      * @param id the ID of the doctor
      * @return the doctor with the given ID
      */
-    @GetMapping("/{id}")
+    @GetMapping("doctor/{id}")
     public DoctorResponseDTO getDoctorById(@PathVariable Long id) {
         return doctorMapper.toResponseDTO(doctorService.getDoctorById(id));
     }
@@ -34,7 +33,7 @@ public class DoctorController extends BaseV1Controller {
      * @param email the email of the doctor
      * @return the doctor with the given email
      */
-    @GetMapping("/{email}")
+    @GetMapping("doctor/email")
     public DoctorResponseDTO findByEmail(@RequestParam String email) {
         return doctorMapper.toResponseDTO(doctorService.findByEmail(email));
     }
