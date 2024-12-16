@@ -1,6 +1,7 @@
 package com.conexa.backend.scheduling.infrastructure.security.jwt;
 
 import com.conexa.backend.scheduling.infrastructure.security.services.DoctorDetailsService;
+import com.conexa.backend.scheduling.infrastructure.security.services.TokenBlacklistService;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -24,6 +25,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtUtil jwtUtil;
     private final DoctorDetailsService doctorDetailsService;
+    private final TokenBlacklistService tokenBlacklistService;
 
     @Override
     protected void doFilterInternal(
@@ -50,6 +52,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String jwtToken = authHeader.substring(7);
 
         try {
+            if (tokenBlacklistService.isTokenBlacklisted(jwtToken)) {
+                log.warn("Blacklisted token used for request: {}", requestURI);
+                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Token is blacklisted");
+                return;
+            }
+
             String email = jwtUtil.extractEmail(jwtToken);
             log.info("Extracted email from JWT: {}", email);
 
@@ -72,6 +80,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             log.warn("JWT expired for request: {}. Exception: {}", requestURI, ex.getMessage());
             throw ex;
         }
+
         chain.doFilter(request, response);
     }
 }
