@@ -3,6 +3,7 @@ package com.conexa.backend.scheduling.application.services;
 import com.conexa.backend.scheduling.domain.exceptions.doctor.DoctorNotFoundException;
 import com.conexa.backend.scheduling.domain.exceptions.schedule.ConflictingScheduleException;
 import com.conexa.backend.scheduling.domain.exceptions.schedule.InvalidScheduleDateException;
+import com.conexa.backend.scheduling.domain.exceptions.schedule.DoctorSelfScheduleException;
 import com.conexa.backend.scheduling.domain.models.Doctor;
 import com.conexa.backend.scheduling.domain.models.Patient;
 import com.conexa.backend.scheduling.domain.models.Schedule;
@@ -31,8 +32,9 @@ public class ScheduleService {
     @Transactional
     public ScheduleResponseDTO createSchedule(CreateScheduleRequestDTO dto, Long doctorId) {
         Doctor doctor = getDoctor(doctorId);
-        Patient patient = getOrCreatePatient(dto.patient());
+        validateDoctorPatientConflict(doctor, dto.patient());
 
+        Patient patient = getOrCreatePatient(dto.patient());
         validateScheduleDate(dto.dateTime());
         checkConflicts(doctor.getId(), patient.getId(), dto.dateTime());
 
@@ -45,6 +47,12 @@ public class ScheduleService {
     private Doctor getDoctor(Long doctorId) {
         return doctorRepository.findById(doctorId)
                 .orElseThrow(() -> new DoctorNotFoundException("The doctor information could not be found."));
+    }
+
+    private void validateDoctorPatientConflict(Doctor doctor, PatientDTO patientDTO) {
+        if (doctor.getCpf().equals(patientDTO.cpf())) {
+            throw new DoctorSelfScheduleException();
+        }
     }
 
     private Patient getOrCreatePatient(PatientDTO patientDTO) {
