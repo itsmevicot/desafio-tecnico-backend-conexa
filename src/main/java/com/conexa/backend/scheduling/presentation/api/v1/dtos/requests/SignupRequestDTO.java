@@ -1,6 +1,7 @@
 package com.conexa.backend.scheduling.presentation.api.v1.dtos.requests;
 
 import br.com.caelum.stella.bean.validation.CPF;
+import com.conexa.backend.scheduling.presentation.api.v1.validators.SecurePassword;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 
@@ -10,6 +11,7 @@ public record SignupRequestDTO(
         String email,
 
         @NotBlank(message = "Password is mandatory")
+        @SecurePassword
         String password,
 
         @NotBlank(message = "Confirm password is mandatory")
