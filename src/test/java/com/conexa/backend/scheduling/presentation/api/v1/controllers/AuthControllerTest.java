@@ -3,6 +3,7 @@ package com.conexa.backend.scheduling.presentation.api.v1.controllers;
 import com.conexa.backend.scheduling.domain.models.Doctor;
 import com.conexa.backend.scheduling.infrastructure.repositories.DoctorRepository;
 import com.conexa.backend.scheduling.infrastructure.security.jwt.JwtUtil;
+import com.conexa.backend.scheduling.infrastructure.security.services.TokenBlacklistService;
 import com.conexa.backend.scheduling.presentation.api.v1.dtos.requests.SignupRequestDTO;
 import com.conexa.backend.scheduling.presentation.api.v1.dtos.requests.LoginRequestDTO;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -23,7 +24,6 @@ import java.util.Date;
 import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -36,6 +36,9 @@ class AuthControllerTest {
 
     @Autowired
     private ObjectMapper objectMapper;
+
+    @MockitoBean
+    private TokenBlacklistService tokenBlacklistService;
 
     @MockitoBean
     private DoctorRepository doctorRepository;
@@ -72,6 +75,14 @@ class AuthControllerTest {
                 .thenReturn("test@example.com");
         Mockito.when(jwtUtil.extractExpiration("valid.jwt.token"))
                 .thenReturn(Date.from(Instant.now().plus(1, ChronoUnit.HOURS)));
+        Mockito.when(tokenBlacklistService.isTokenBlacklisted("blacklisted.jwt.token"))
+                .thenReturn(true);
+        Mockito.when(tokenBlacklistService.isTokenBlacklisted("valid.jwt.token"))
+                .thenReturn(false);
+        Mockito.when(jwtUtil.validateToken("blacklisted.jwt.token"))
+                .thenReturn(false);
+        Mockito.when(jwtUtil.extractExpiration("blacklisted.jwt.token"))
+                .thenReturn(Date.from(Instant.now().minus(1, ChronoUnit.HOURS)));
     }
 
     @Test
@@ -148,4 +159,12 @@ class AuthControllerTest {
                 .andExpect(status().isOk());
     }
 
+    @Test
+    void logout_shouldReturn401_whenTokenIsBlacklisted() throws Exception {
+        String blacklistedToken = "Bearer blacklisted.jwt.token";
+
+        mockMvc.perform(post("/api/v1/logout")
+                        .header("Authorization", blacklistedToken))
+                .andExpect(status().isUnauthorized());
+    }
 }
