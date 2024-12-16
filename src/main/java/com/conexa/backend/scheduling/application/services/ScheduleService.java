@@ -15,6 +15,7 @@ import com.conexa.backend.scheduling.presentation.api.v1.dtos.responses.Schedule
 import com.conexa.backend.scheduling.presentation.api.v1.mappers.ScheduleMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 
@@ -27,6 +28,7 @@ public class ScheduleService {
     private final PatientRepository patientRepository;
     private final ScheduleMapper scheduleMapper;
 
+    @Transactional
     public ScheduleResponseDTO createSchedule(CreateScheduleRequestDTO dto, Long doctorId) {
         Doctor doctor = getDoctor(doctorId);
         Patient patient = getOrCreatePatient(dto.patient());
