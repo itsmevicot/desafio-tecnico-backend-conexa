@@ -2,6 +2,7 @@ package com.conexa.backend.scheduling.presentation.api.v1.dtos.requests;
 
 import br.com.caelum.stella.bean.validation.CPF;
 import com.conexa.backend.scheduling.presentation.api.v1.validators.SecurePassword;
+import com.conexa.backend.scheduling.presentation.api.v1.validators.ValidTelephone;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 
@@ -28,6 +29,7 @@ public record SignupRequestDTO(
         String birthDate,
 
         @NotBlank(message = "Telephone is mandatory")
+        @ValidTelephone
         String telephone
 ) {
 
