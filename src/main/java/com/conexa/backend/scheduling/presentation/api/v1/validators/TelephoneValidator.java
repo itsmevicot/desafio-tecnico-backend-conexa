@@ -5,7 +5,7 @@ import jakarta.validation.ConstraintValidatorContext;
 
 public class TelephoneValidator implements ConstraintValidator<ValidTelephone, String> {
 
-    private static final String TELEPHONE_PATTERN = "^\\d{10,11}$";
+    private static final String TELEPHONE_PATTERN = "^\\d{10,15}$";
 
     @Override
     public boolean isValid(String telephone, ConstraintValidatorContext context) {

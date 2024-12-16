@@ -12,7 +12,7 @@ import java.lang.annotation.Target;
 @Target({ElementType.FIELD, ElementType.PARAMETER})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ValidTelephone {
-    String message() default "Telephone must have 10 or 11 digits.";
+    String message() default "Telephone must between 10 and 15 digits.";
     Class<?>[] groups() default {};
     Class<? extends Payload>[] payload() default {};
 }
