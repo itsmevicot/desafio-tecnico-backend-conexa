@@ -2,10 +2,13 @@ package com.conexa.backend.scheduling.presentation.api.v1.controllers;
 
 import com.conexa.backend.scheduling.application.services.DoctorService;
 import com.conexa.backend.scheduling.presentation.api.v1.BaseV1Controller;
+import com.conexa.backend.scheduling.presentation.api.v1.dtos.requests.UpdateDoctorRequestDTO;
 import com.conexa.backend.scheduling.presentation.api.v1.dtos.responses.DoctorResponseDTO;
 import com.conexa.backend.scheduling.presentation.api.v1.mappers.DoctorMapper;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 @Tag(name = "Doctor")
@@ -17,24 +20,34 @@ public class DoctorController extends BaseV1Controller {
     private final DoctorMapper doctorMapper;
 
     /**
-     * Retrieves a doctor by ID.
+     * Retrieves the authenticated doctor's info by ID.
      *
      * @param id the ID of the doctor
      * @return the doctor with the given ID
      */
     @GetMapping("doctor/{id}")
     public DoctorResponseDTO getDoctorById(@PathVariable Long id) {
-        return doctorMapper.toResponseDTO(doctorService.getDoctorById(id));
+        String authenticatedEmail = SecurityContextHolder.getContext().getAuthentication().getName();
+        return doctorMapper.toResponseDTO(doctorService.getDoctorByIdIfAuthorized(id, authenticatedEmail));
     }
 
     /**
-     * Retrieves a doctor by email.
+     * Retrieves the authenticated doctor's info by email.
      *
      * @param email the email of the doctor
      * @return the doctor with the given email
      */
     @GetMapping("doctor/email")
     public DoctorResponseDTO findByEmail(@RequestParam String email) {
-        return doctorMapper.toResponseDTO(doctorService.findByEmail(email));
+        String authenticatedEmail = SecurityContextHolder.getContext().getAuthentication().getName();
+        return doctorMapper.toResponseDTO(doctorService.findByEmailIfAuthorized(email, authenticatedEmail));
+    }
+
+    @PutMapping("doctor/{id}")
+    public DoctorResponseDTO updateDoctorById(
+            @PathVariable Long id,
+            @Valid @RequestBody UpdateDoctorRequestDTO request) {
+        String authenticatedEmail = SecurityContextHolder.getContext().getAuthentication().getName();
+        return doctorMapper.toResponseDTO(doctorService.updateDoctorIfAuthorized(id, authenticatedEmail, request));
     }
 }
