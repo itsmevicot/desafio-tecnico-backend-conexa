@@ -1,5 +1,6 @@
 package com.conexa.backend.scheduling.presentation.api.v1.controllers;
 
+import com.conexa.backend.scheduling.domain.enums.UserRole;
 import com.conexa.backend.scheduling.domain.models.Doctor;
 import com.conexa.backend.scheduling.infrastructure.repositories.DoctorRepository;
 import com.conexa.backend.scheduling.infrastructure.security.jwt.JwtUtil;
@@ -21,9 +22,9 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
-import static org.mockito.ArgumentMatchers.any;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -56,6 +57,7 @@ class AuthControllerTest {
         testDoctor = new Doctor();
         testDoctor.setEmail("test@example.com");
         testDoctor.setPassword("encodedPassword");
+        testDoctor.setRole(UserRole.ROLE_DOCTOR);
 
         Mockito.when(passwordEncoder.encode("Password@123"))
                 .thenReturn("encodedPassword");
@@ -67,7 +69,7 @@ class AuthControllerTest {
         Mockito.when(doctorRepository.save(Mockito.any(Doctor.class)))
                 .thenAnswer(invocation -> invocation.getArgument(0));
 
-        Mockito.when(jwtUtil.generateToken("test@example.com"))
+        Mockito.when(jwtUtil.generateToken("test@example.com", List.of(UserRole.ROLE_DOCTOR.name())))
                 .thenReturn("mock.jwt.token");
         Mockito.when(jwtUtil.validateToken("valid.jwt.token"))
                 .thenReturn(true);
@@ -92,7 +94,7 @@ class AuthControllerTest {
                 "Password@123",
                 "Password@123",
                 "Cardiology",
-                "123.456.789-09",
+                "737.937.840-61",
                 "01/01/2000",
                 "(11) 99999-9999"
         );

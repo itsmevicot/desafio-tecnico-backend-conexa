@@ -12,11 +12,14 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Component
@@ -59,7 +62,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             }
 
             String email = jwtUtil.extractEmail(jwtToken);
-            log.info("Extracted email from JWT: {}", email);
+            List<String> roles = jwtUtil.extractRoles(jwtToken);
+            log.info("Extracted email and roles from JWT: {}, {}", email, roles);
 
             if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
                 var userDetails = doctorDetailsService.loadUserByUsername(email);
@@ -67,8 +71,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 if (jwtUtil.validateToken(jwtToken)) {
                     log.info("JWT validated successfully for user: {}", email);
 
+                    var authorities = roles.stream()
+                            .map(SimpleGrantedAuthority::new)
+                            .collect(Collectors.toList());
+
                     var authToken = new UsernamePasswordAuthenticationToken(
-                            userDetails, null, userDetails.getAuthorities()
+                            userDetails, null, authorities
                     );
                     authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                     SecurityContextHolder.getContext().setAuthentication(authToken);
@@ -78,7 +86,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             }
         } catch (ExpiredJwtException ex) {
             log.warn("JWT expired for request: {}. Exception: {}", requestURI, ex.getMessage());
-            throw ex;
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "JWT token expired");
+            return;
         }
 
         chain.doFilter(request, response);

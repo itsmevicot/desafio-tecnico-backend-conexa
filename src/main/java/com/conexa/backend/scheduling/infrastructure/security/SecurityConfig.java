@@ -57,9 +57,12 @@ public class SecurityConfig {
                                     "/swagger-ui/**",
                                     "/v3/api-docs/**"
                             ).permitAll()
+                            .requestMatchers(HttpMethod.POST, "/api/v1/patient").hasAuthority("ROLE_DOCTOR")
+                            .requestMatchers(HttpMethod.GET, "/api/v1/patient/**").hasAuthority("ROLE_ADMIN")
+                            .requestMatchers(HttpMethod.PUT, "/api/v1/patient/**").hasAuthority("ROLE_ADMIN")
+                            .requestMatchers(HttpMethod.DELETE, "/api/v1/patient/**").hasAuthority("ROLE_ADMIN")
                             .requestMatchers(
                                     "/api/v1/schedule/**",
-                                    "/api/v1/patient/**",
                                     "/api/v1/doctor/**"
                             ).authenticated()
                             .anyRequest().permitAll();

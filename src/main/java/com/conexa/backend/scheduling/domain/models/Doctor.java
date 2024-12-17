@@ -1,6 +1,7 @@
 package com.conexa.backend.scheduling.domain.models;
 
 import br.com.caelum.stella.bean.validation.CPF;
+import com.conexa.backend.scheduling.domain.enums.UserRole;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -51,4 +52,7 @@ public class Doctor {
     @Column(nullable = false)
     @Builder.Default
     private boolean isActive = true;
+
+    @Enumerated(EnumType.STRING)
+    private UserRole role;
 }

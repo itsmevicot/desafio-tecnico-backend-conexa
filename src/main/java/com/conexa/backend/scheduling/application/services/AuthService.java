@@ -1,5 +1,6 @@
 package com.conexa.backend.scheduling.application.services;
 
+import com.conexa.backend.scheduling.domain.enums.UserRole;
 import com.conexa.backend.scheduling.domain.exceptions.auth.InvalidCredentialsException;
 import com.conexa.backend.scheduling.domain.exceptions.doctor.DoctorAlreadyExistsException;
 import com.conexa.backend.scheduling.domain.exceptions.doctor.DoctorNotFoundException;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Service;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Date;
+import java.util.List;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -48,6 +50,9 @@ public class AuthService {
         doctor.setPassword(passwordEncoder.encode(doctor.getPassword()));
         log.debug("Encoded password for doctor: {}", doctor.getEmail());
 
+        doctor.setRole(UserRole.ROLE_DOCTOR);
+        log.debug("Set role for doctor: {}", doctor.getEmail());
+
         Doctor savedDoctor = doctorRepository.save(doctor);
         log.info("Signup successful for doctor with email: {}", savedDoctor.getEmail());
 
@@ -68,7 +73,10 @@ public class AuthService {
             throw new InvalidCredentialsException();
         }
 
-        String token = jwtUtil.generateToken(email);
+        String role = doctor.getRole().name();
+        List<String> roles = List.of(role);
+
+        String token = jwtUtil.generateToken(email, roles);
         log.info("Login successful for email: {}. JWT token generated: {}", email, token);
 
         return token;
