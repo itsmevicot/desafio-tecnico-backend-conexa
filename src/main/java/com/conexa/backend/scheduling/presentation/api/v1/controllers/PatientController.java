@@ -5,6 +5,7 @@ import com.conexa.backend.scheduling.presentation.api.v1.BaseV1Controller;
 import com.conexa.backend.scheduling.presentation.api.v1.dtos.requests.PatientRequestDTO;
 import com.conexa.backend.scheduling.presentation.api.v1.dtos.responses.PatientResponseDTO;
 import com.conexa.backend.scheduling.presentation.api.v1.mappers.PatientMapper;
+import com.conexa.backend.scheduling.presentation.api.v1.validators.UpdatePatientValidator;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -52,6 +53,7 @@ public class PatientController extends BaseV1Controller {
      */
     @PutMapping("patient/{id}")
     public ResponseEntity<PatientResponseDTO> updatePatient(@PathVariable Long id, @Valid @RequestBody PatientRequestDTO request) {
+        UpdatePatientValidator.validate(request);
         var updatedPatient = patientService.updatePatient(id, patientMapper.toEntity(request));
         return ResponseEntity.ok(patientMapper.toResponseDTO(updatedPatient));
     }
