@@ -1,5 +1,6 @@
 package com.conexa.backend.scheduling.application.services;
 
+import com.conexa.backend.scheduling.domain.exceptions.patient.PatientNotFoundException;
 import com.conexa.backend.scheduling.domain.models.Patient;
 import com.conexa.backend.scheduling.infrastructure.repositories.PatientRepository;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +19,7 @@ public class PatientService {
     public Patient getPatientById(Long id) {
         return patientRepository.findById(id)
                 .filter(Patient::isActive)
-                .orElseThrow(() -> new IllegalArgumentException("Patient not found or inactive"));
+                .orElseThrow(PatientNotFoundException::new);
     }
 
     public Patient updatePatient(Long id, Patient updatedPatient) {
