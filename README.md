@@ -32,7 +32,10 @@ have to install MySQL and Redis on your machine.
 Alternatively, you can run the project locally while pointing to a MySQL and Redis instance running on Docker.
 
 Either way, remember to set the environment variables (.env file) that will be used by the application.properties and if you choose to go with Docker, set .env.docker as well.
+
 This step is very important, as application.properties doesn't have a fallback and will not work without the environment variables.
+
+Also, it's mandatory to create a strong JWT_SECRET because the application may not start. You can create your own or get one [here](https://jwtsecret.com/generate).
 
 Having said that, let's move on to the steps to run the project.
 
